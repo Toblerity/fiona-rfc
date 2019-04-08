@@ -1,39 +1,39 @@
-RFC 1: Fiona 2.0 changes
-========================
+RFC 1: A plan for Fiona 2.0
+===========================
 
-Request for comments: 1
-Author: Sean Gillies, sean.gillies@gmail.com
-Date: 2019-04-04
-Obsoleted by: none
-Obsoletes: none
+* Request for comments: 1
+* Author: Sean Gillies, sean.gillies@gmail.com
+* Date: 2019-04-08
 
 ## Abstract
 
-This document is a template for future requests for comments (RFC).
+It's a good time to begin work on a new major version of Fiona. Removing support for obsolete versions of Python and GDAL will cut maintenance costs and improved design will set the project up for more growth.
 
 ## Introduction
 
-Requests for comments (RFC) are more useful if they have consistent structure.
-This document lays out the basic structure for project RFCs. It may be changed
-by a future RFC.
+Instead of working on another backwards compatible minor version of Fiona (1.9), the Fiona team shall begin working on what would be a new major version with some breaking changes.
+
+The planned changes are:
+
+* Dropping support for Python versions < 3.5.
+* Dropping support for GDAL versions < 2.1.
+* Replacing the existing coordinate referencing dicts with a new CRS class (as in Rasterio).
+* Replacing the `"geometry"` in `feature["geometry"]` with a Cython extension class that could enhance serialization performance. Geometry objects would become immutable.
 
 ## Details
 
-RFCs are to be formatted using Markdown and kept under docs/rfc. RFC docs shall
-be named like `0000-template.md`, `0001-the-next-rfc.md`, &c so that docs can
-be easily sorted in order of creation.
+The Python project will no longer support Python versions < 3.5 after the end of 2019. Python 3.4 has been retired. We can stop testing with 3.4 and stop building wheels for 3.4. Python 2.7 will not be retired until Jan 1, 2020, but Numpy and many associated projects have already decided to drop support for Python 2.7 in new versions starting Jan 1, 2019: https://python3statement.org/. Fiona can follow suit. Not only do we cut the cost of testing and building wheels for 2.7, we can eliminate the compat module and version-dependent dependencies.
 
-A RFC shall have a title formatted like the one at the top of this template, 5
-metadata fields (RFC number, author, date, obsoleted by, obsoletes), and 5
-sections: abstract, introduction, implementation details, considerations, and
-references. If the RFC does not make a previous RFC obsolete or has not been
-made obsolete by a subsequent RFC, these metadata fields can be omitted.
+TODO: details about supported GDAL versions.
+
+TODO: CRS details
+
+TODO: Geometry details
 
 ## Considerations
 
-This RFC has no compatibility or security considerations. If it did propose a
-breaking change for the API or project access, that would be discussed here.
+TODO: mitigation of pain for users, effects on wheel-building infrastructure, conda, etc.
 
 ## References
 
-This RFC template has no references, but if it did, they would be listed here.
+https://python3statement.org/
