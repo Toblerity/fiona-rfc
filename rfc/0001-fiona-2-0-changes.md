@@ -1,5 +1,5 @@
-RFC 1: A plan for Fiona 2.0
-===========================
+RFC 1: Changes for Fiona 2.0
+============================
 
 * Request for comments: 1
 * Author: Sean Gillies, sean.gillies@gmail.com
