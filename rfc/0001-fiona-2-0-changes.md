@@ -3,7 +3,7 @@ RFC 1: Changes for Fiona 2.0
 
 * Request for comments: 1
 * Author: Sean Gillies, sean.gillies@gmail.com
-* Date: 2019-04-08
+* Date: 2019-04-21
 
 ## Abstract
 
