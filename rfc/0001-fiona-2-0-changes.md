@@ -56,5 +56,5 @@ Warning about these deprecations will be somewhat complicated. We are faced with
 
 ## References
 
-https://python3statement.org/
-https://semver.org
+* https://python3statement.org/
+* https://semver.org
