@@ -7,7 +7,7 @@ RFC 1: Changes for Fiona 2.0
 
 ## Abstract
 
-It's a good time to begin work on a new major version of Fiona. Removing support for obsolete versions of Python and GDAL will cut maintenance costs and improved design will set the project up for more growth.
+It's a good time to begin work on a new major version of Fiona. Removing support for obsolete versions of Python and GDAL will cut maintenance costs. Adding support for GDAL 2.5 will allow users to upgrade. Small design improvements will set the project up for more growth.
 
 ## Introduction
 
@@ -17,15 +17,18 @@ The planned changes are:
 
 * Dropping support for Python versions < 3.5.
 * Dropping support for GDAL versions < 2.2.
+* Adding support for GDAL version 2.5.
 * Replacing the existing coordinate referencing dicts with a new CRS class (as in Rasterio).
 * Replacing the `"geometry"` in `feature["geometry"]` with a Cython extension class that could enhance interoperability with shapely. Geometry objects would become immutable.
 * Replacing the feature dict with a Cython extension class that could improve dataset filter and translation performance.
 
 ## Details
 
-The Python project will no longer support Python versions < 3.5 after the end of 2019. Python 3.4 has been retired. We can stop testing with 3.4 and stop building wheels for 3.4. Python 2.7 will not be retired until Jan 1, 2020, but Numpy and many associated projects have already decided to drop support for Python 2.7 in new versions starting Jan 1, 2019: https://python3statement.org/. Fiona can follow suit. Not only do we cut the cost of testing and building wheels for 2.7, we can eliminate the compat module and backported dependencies such as argparse, ordereddict, enum34, and mock.
+The Python project will no longer support Python versions < 3.5 after the end of 2019. Python 3.4 has been retired. We can stop testing with 3.4 and stop building wheels for 3.4. Python 2.7 will not be retired until Jan 1, 2020, but Numpy and many associated projects have already decided to drop support for Python 2.7 in new versions starting Jan 1, 2019 [1]. Fiona can follow suit. Not only do we cut the cost of testing and building wheels for 2.7, we can eliminate the compat module and backported dependencies such as argparse, ordereddict, enum34, and mock.
 
 Many Fiona users get their distributions from PyPI and Conda-forge, which provide very recent versions of GDAL, 2.3 or 2.4. Many others get theirs from Ubuntu-GIS, which provides GDAL 2.1 in the stable PPA and GDAL 2.2 in the unstable PPA for Xenial (16.04), the oldest supported LTS release. The Fiona project has no regular input from other packagers downstream. Cutting off support for GDAL versions < 2.2 lightens the project build matrix and allows the deletion of `fiona/_shim1.*`, `fiona/_shim2.*`, and many lines of code in setup.py.
+
+GDAL 2.5 has removed functions from its C API and breaks Fiona. The project can not be built because it references a function that has been removed. Even if the function were restored, Fiona needs to be updated with respect to GDAL 2.5's data-CRS axis order mapping, otherwise the transform() function will have very different behavior than it did with GDAL 2.4: it will return coordinates in the opposite order. 
 
 Copying Rasterio's CRS class to fiona.crs will allow Fiona to change to WKT as the canonical representation of spatial reference systems and gain accuracy and precision. CRS objects would be immutable, which is a breaking change. The CRS class would be a Cython extension class with a OGRSpatialRefenceH object at its core.
 
@@ -42,10 +45,10 @@ Replacing the geometry in `feature["geometry"]` with a Cython extension class ba
 
 Dropping support for Python 2.7 must be advertised in various places: the project discussion group, developer blogs, Twitter, gdal-dev. There are no other special considerations.
 
-Dropping support for GDAL 1.x - 2.1.x must also be advertised in the same places. GDAL 2.2 is currently the baseline version and will remain the baseline version for Fiona 2.0. There are no other special considerations.
+Dropping support for GDAL 1.x - 2.1.x must also be advertised in the same places. GDAL 2.2 is currently the baseline version, meaning that there are shim modules which add features missing from earlier versions of GDAL. GDAL 2.5 will become the new baseline version. Shim modules will be added to provide some features new to 2.5 such as GetDataAxisToSRSAxisMapping() and SetAxisMappingStrategy()[2]. This does not require a change in the canonical representation of spatial reference systems from WKT (version 1), as is the case now, to WKT2. There are no other special considerations.
 
 It would be appropriate to warn users about upcoming changes for CRS, geometry, and feature objects. The semantic version spec 
-recommends at least one minor version release with the deprecation warnings in place before breaking changes are released: https://semver.org/#how-should-i-handle-deprecating-functionality. This minor version release would be 1.9.0.
+recommends at least one minor version release with the deprecation warnings in place before breaking changes are released [3]. This minor version release would be 1.9.0.
 
 What are the deprecations?
 
@@ -56,5 +59,6 @@ Warning about these deprecations will be somewhat complicated. We are faced with
 
 ## References
 
-* https://python3statement.org/
-* https://semver.org
+* [1] https://python3statement.org/
+* [2] https://trac.osgeo.org/gdal/wiki/rfc73_proj6_wkt2_srsbarn
+* [3] https://semver.org
